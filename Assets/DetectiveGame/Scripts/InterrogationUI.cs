@@ -8,6 +8,7 @@ namespace DetectiveGame
     {
         [SerializeField] private InterrogationManager _interrogationManager;
         [SerializeField] private EmotionDetector _emotionDetector;
+        [SerializeField] private VoiceInput _voiceInput;
 
         private string _playerInput = "";
         private Vector2 _scrollPosition;
@@ -19,6 +20,7 @@ namespace DetectiveGame
         private GUIStyle _headerStyle;
         private GUIStyle _emotionBarSmall;
         private GUIStyle _streamingStyle;
+        private GUIStyle _micStyle;
         private bool _stylesInitialized = false;
 
         private void InitStyles()
@@ -68,6 +70,11 @@ namespace DetectiveGame
             _streamingStyle.normal.textColor = new UnityEngine.Color(1f, 0.85f, 0.4f, 0.7f);
             _streamingStyle.padding = new RectOffset(10, 10, 5, 5);
 
+            _micStyle = new GUIStyle(GUI.skin.label);
+            _micStyle.fontSize = 18;
+            _micStyle.fontStyle = FontStyle.Bold;
+            _micStyle.alignment = TextAnchor.MiddleCenter;
+
             _stylesInitialized = true;
         }
 
@@ -80,7 +87,6 @@ namespace DetectiveGame
             float screenW = Screen.width;
             float screenH = Screen.height;
 
-            // Right panel - interrogation dialogue
             float panelWidth = 520;
             float panelX = screenW - panelWidth - 10;
             float panelY = 10;
@@ -88,16 +94,13 @@ namespace DetectiveGame
 
             GUI.Box(new UnityEngine.Rect(panelX, panelY, panelWidth, panelHeight), "");
 
-            // Header
             string headerText = _interrogationManager.IsReady ? "INTERROGATION ROOM" : "LOADING MODEL...";
             GUI.Label(new UnityEngine.Rect(panelX, panelY + 5, panelWidth, 30), headerText, _headerStyle);
 
-            // Conversation scroll area
             float convoTop = panelY + 40;
-            float convoHeight = panelHeight - 130;
+            float convoHeight = panelHeight - 170;
             List<string> history = _interrogationManager.ConversationLog;
 
-            // Calculate total content height
             float contentHeight = 0;
             foreach (string line in history)
             {
@@ -106,7 +109,6 @@ namespace DetectiveGame
                 contentHeight += lineHeight + 5;
             }
 
-            // Add streaming text height if currently generating
             if (_interrogationManager.IsWaitingForResponse && !string.IsNullOrEmpty(_interrogationManager.StreamingText))
             {
                 string streamLabel = "[Detective]: " + _interrogationManager.StreamingText;
@@ -129,7 +131,6 @@ namespace DetectiveGame
                 yPos += lineHeight + 5;
             }
 
-            // Show streaming response as it comes in
             if (_interrogationManager.IsWaitingForResponse && !string.IsNullOrEmpty(_interrogationManager.StreamingText))
             {
                 string streamLabel = "[Detective]: " + _interrogationManager.StreamingText + " _";
@@ -140,10 +141,34 @@ namespace DetectiveGame
 
             GUI.EndScrollView();
 
-            // Auto-scroll to bottom
             if (contentHeight > convoHeight)
             {
                 _scrollPosition.y = contentHeight - convoHeight + 50;
+            }
+
+            // Mic status indicator
+            float micY = panelY + panelHeight - 130;
+            if (_voiceInput != null)
+            {
+                if (_voiceInput.IsListening)
+                {
+                    _micStyle.normal.textColor = UnityEngine.Color.red;
+                    GUI.Label(new UnityEngine.Rect(panelX + 10, micY, panelWidth - 20, 25),
+                        "[ RECORDING... Hold SPACE ]", _micStyle);
+
+                    if (!string.IsNullOrEmpty(_voiceInput.CurrentTranscript))
+                    {
+                        _systemStyle.normal.textColor = new UnityEngine.Color(0.8f, 0.8f, 0.8f);
+                        GUI.Label(new UnityEngine.Rect(panelX + 10, micY + 25, panelWidth - 20, 25),
+                            "Hearing: " + _voiceInput.CurrentTranscript, _systemStyle);
+                    }
+                }
+                else
+                {
+                    _micStyle.normal.textColor = new UnityEngine.Color(0.6f, 0.6f, 0.6f);
+                    GUI.Label(new UnityEngine.Rect(panelX + 10, micY, panelWidth - 20, 25),
+                        "Hold SPACE to speak  |  Or type below", _micStyle);
+                }
             }
 
             // Status text
@@ -151,29 +176,23 @@ namespace DetectiveGame
             {
                 GUI.Label(
                     new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
-                    "Detective is speaking...",
-                    _systemStyle
-                );
+                    "Detective is speaking...", _systemStyle);
             }
             else if (!_interrogationManager.IsReady)
             {
                 GUI.Label(
                     new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
-                    "Loading model, please wait...",
-                    _systemStyle
-                );
+                    "Loading model, please wait...", _systemStyle);
             }
 
-            // Input field and send button (text input for now, voice later)
+            // Text input still works as fallback
             float inputY = panelY + panelHeight - 55;
             bool canType = !_interrogationManager.IsWaitingForResponse && _interrogationManager.IsReady;
 
             GUI.enabled = canType;
             _playerInput = GUI.TextField(
                 new UnityEngine.Rect(panelX + 10, inputY, panelWidth - 100, 40),
-                _playerInput,
-                _inputStyle
-            );
+                _playerInput, _inputStyle);
 
             if (GUI.Button(new UnityEngine.Rect(panelX + panelWidth - 80, inputY, 70, 40), "Send", _buttonStyle))
             {
@@ -197,7 +216,7 @@ namespace DetectiveGame
             }
             GUI.enabled = true;
 
-            // Left side - small emotion readout
+            // Emotion readout
             if (_emotionDetector != null)
             {
                 GUI.Box(new UnityEngine.Rect(10, 10, 200, 35), "");

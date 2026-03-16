@@ -517,6 +517,7 @@ GameObject:
   - component: {fileID: 1064799470}
   - component: {fileID: 1064799473}
   - component: {fileID: 1064799472}
+  - component: {fileID: 1064799474}
   m_Layer: 0
   m_Name: Solution
   m_TagString: Untagged
@@ -595,6 +596,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.InterrogationUI
   _interrogationManager: {fileID: 1064799473}
   _emotionDetector: {fileID: 1064799471}
+  _voiceInput: {fileID: 1064799474}
 --- !u!114 &1064799473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,6 +622,20 @@ MonoBehaviour:
     be suspicious. If they look angry, note it. React naturally as a detective would
     to body language. Do NOT explicitly say ''I can see you look nervous'' - instead
     react naturally, like a real detective reading body language.'
+--- !u!114 &1064799474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064799459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8906451889428fd47ac35850394ab202, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.VoiceInput
+  _interrogationManager: {fileID: 1064799473}
+  pushToTalkKey: 32
 --- !u!224 &1229135957 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3259285889726014650, guid: 5713b959e3c77a58fb258133fc8e4aef, type: 3}
