@@ -1,16 +1,28 @@
 using System.Collections.Generic;
 using UnityEngine;
-using LLMUnity;
+using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 
 namespace DetectiveGame
 {
+    public enum LLMMode
+    {
+        Local,
+        OpenRouter
+    }
+
     public class InterrogationManager : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private Mediapipe.Unity.Sample.FaceLandmarkDetection.EmotionDetector _emotionDetector;
+        [Header("LLM Mode")]
+        [SerializeField] private LLMMode _llmMode = LLMMode.Local;
 
-        [Tooltip("Drag the LLM Detective GameObject here (the one with LLMAgent)")]
-        [SerializeField] private LLMAgent _detectiveAgent;
+        [Header("References")]
+        [SerializeField] private EmotionDetector _emotionDetector;
+
+        [Tooltip("For Local mode: drag the LLM Detective GameObject here")]
+        [SerializeField] private MonoBehaviour _detectiveAgentLocal;
+
+        [Tooltip("For OpenRouter mode: drag the OpenRouterLLM GameObject here")]
+        [SerializeField] private OpenRouterLLM _openRouterLLM;
 
         [Tooltip("Drag the PiperManager GameObject here")]
         [SerializeField] private PiperManager _piperTTS;
@@ -28,7 +40,6 @@ namespace DetectiveGame
 
         private List<string> _conversationLog = new List<string>();
         private string _currentDetectiveText = "";
-        private string _lastPlayerMessage = "";
         private bool _isWaitingForResponse = false;
         private bool _isReady = false;
         private string _streamingText = "";
@@ -43,29 +54,62 @@ namespace DetectiveGame
 
         private async void Start()
         {
-            if (_detectiveAgent == null)
+            if (_llmMode == LLMMode.Local)
             {
-                Debug.LogError("InterrogationManager: No LLMAgent assigned!");
-                return;
-            }
+#if UNITY_EDITOR || UNITY_STANDALONE
+                var agent = _detectiveAgentLocal as LLMUnity.LLMAgent;
+                if (agent == null)
+                {
+                    Debug.LogError("InterrogationManager: No LLMAgent assigned for Local mode!");
+                    return;
+                }
 
-            if (_injectEmotionIntoPrompt)
+                if (_injectEmotionIntoPrompt)
+                {
+                    agent.systemPrompt += _emotionSystemSuffix;
+                }
+
+                await agent.Warmup();
+                _isReady = true;
+
+                string response = await agent.Chat(
+                    "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
+                    null, null, true);
+
+                if (response != null)
+                {
+                    _currentDetectiveText = response;
+                    _conversationLog.Add("[Detective]: " + response);
+                    SpeakText(response);
+                }
+#endif
+            }
+            else if (_llmMode == LLMMode.OpenRouter)
             {
-                _detectiveAgent.systemPrompt += _emotionSystemSuffix;
+                if (_openRouterLLM == null)
+                {
+                    Debug.LogError("InterrogationManager: No OpenRouterLLM assigned!");
+                    return;
+                }
+
+                if (_injectEmotionIntoPrompt)
+                {
+                    _openRouterLLM.SetSystemPromptSuffix(_emotionSystemSuffix);
+                }
+
+                _isReady = true;
+
+                _openRouterLLM.SendMessage(
+                    "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
+                    OnOpenRouterResponse);
             }
-
-            await _detectiveAgent.Warmup();
-            _isReady = true;
-
-            await SendToDetective("[The suspect has just sat down in the interrogation room. Begin your questioning.]");
         }
 
-        public async void SubmitPlayerResponse(string playerMessage)
+        public void SubmitPlayerResponse(string playerMessage)
         {
             if (_isWaitingForResponse || !_isReady || string.IsNullOrEmpty(playerMessage)) return;
 
             _isWaitingForResponse = true;
-            _lastPlayerMessage = playerMessage;
 
             string emotionContext = GetEmotionContext();
             string messageWithEmotion;
@@ -82,33 +126,46 @@ namespace DetectiveGame
             _conversationLog.Add("[Player]: " + playerMessage);
             _conversationLog.Add("[Emotion: " + emotionContext + "]");
 
-            await SendToDetective(messageWithEmotion);
+            if (_llmMode == LLMMode.Local)
+            {
+                SendToLocalLLM(messageWithEmotion);
+            }
+            else
+            {
+                _openRouterLLM.SendMessage(messageWithEmotion, OnOpenRouterResponse);
+            }
         }
 
-        private async System.Threading.Tasks.Task SendToDetective(string message)
+        // --- Local LLM ---
+        private async void SendToLocalLLM(string message)
         {
-            _isWaitingForResponse = true;
+#if UNITY_EDITOR || UNITY_STANDALONE
+            var agent = _detectiveAgentLocal as LLMUnity.LLMAgent;
             _streamingText = "";
 
-            string response = await _detectiveAgent.Chat(
-                message,
-                OnStreamingToken,
-                OnResponseComplete,
-                true
-            );
+            string response = await agent.Chat(message, OnStreamingToken, OnResponseComplete, true);
 
             if (response != null)
             {
                 _currentDetectiveText = response;
                 _conversationLog.Add("[Detective]: " + response);
-
-                // Speak the response
                 SpeakText(response);
             }
 
             _isWaitingForResponse = false;
+#endif
         }
 
+        // --- OpenRouter ---
+        private void OnOpenRouterResponse(string response)
+        {
+            _currentDetectiveText = response;
+            _conversationLog.Add("[Detective]: " + response);
+            _isWaitingForResponse = false;
+            SpeakText(response);
+        }
+
+        // --- TTS ---
         private void SpeakText(string text)
         {
             if (_piperTTS == null)
@@ -123,7 +180,6 @@ namespace DetectiveGame
 
         private void Update()
         {
-            // Check if TTS has finished speaking
             if (_isSpeaking && _piperTTS != null)
             {
                 AudioSource audioSource = _piperTTS.GetComponent<AudioSource>();
@@ -151,11 +207,7 @@ namespace DetectiveGame
 
         public void CancelResponse()
         {
-            if (_isWaitingForResponse)
-            {
-                _detectiveAgent.CancelRequests();
-                _isWaitingForResponse = false;
-            }
+            _isWaitingForResponse = false;
         }
     }
 }

@@ -609,8 +609,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af68859be3b57e47bd5467cac41a5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.InterrogationManager
+  _llmMode: 0
   _emotionDetector: {fileID: 1064799471}
-  _detectiveAgent: {fileID: 1010895324}
+  _detectiveAgentLocal: {fileID: 0}
+  _openRouterLLM: {fileID: 0}
   _piperTTS: {fileID: 1278242821}
   _injectEmotionIntoPrompt: 1
   _emotionSystemSuffix: '
@@ -928,6 +930,66 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1422518688
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1422518690}
+  - component: {fileID: 1422518689}
+  m_Layer: 0
+  m_Name: OpenRouterLLM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1422518689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422518688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef6db6dfde6042c4194a988812b870b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.OpenRouterLLM
+  _apiKey: YOUR_OPENROUTER_API_KEY_HERE
+  _model: google/gemma-2-9b-it:free
+  _apiUrl: https://openrouter.ai/api/v1/chat/completions
+  _maxTokens: 300
+  _temperature: 0.8
+  _systemPrompt: 'You are a detective trying to get to the bottom of a likely attempted
+    murder case. You are to be proactive in questioning the user.
+
+
+    Setting:
+    High-end restaurant.
+
+
+    Prologue: The attempted murder target is a regular
+    visitor to the restaurant. Keep your responses concise - 2 to 3 sentences max.
+    Be intimidating but professional.'
+--- !u!4 &1422518690
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422518688}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -23.2561, y: 0, z: 23.81285}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1434,3 +1496,4 @@ SceneRoots:
   - {fileID: 2133527782}
   - {fileID: 1010895325}
   - {fileID: 1278242823}
+  - {fileID: 1422518690}
