@@ -8,6 +8,11 @@ public class MicrophoneListener : MonoBehaviour
     [SerializeField] [Range(0f, 4f)] private float sensitivity = 1f;
     [SerializeField] private int sampleRate = 44100;
     
+    [Header("Debug")]
+    [SerializeField] private bool playMicAudio;
+    [ProgressBar("Volume Monitor", 1.0f)]
+    [SerializeField] private float currentLoudness;
+    
     // Microphone settings
     private MicrophoneSelector _micSelector;
     private string _selectedMicrophone;
@@ -29,7 +34,7 @@ public class MicrophoneListener : MonoBehaviour
      * Returns the starting sample position of the recording.
      * Use this value as the argument in the StopRecording() method.
      */
-    public int StartRecording()
+    public float StartRecording()
     {
         const bool shouldLoop = false;
         const int lengthSec = 3600; // one hour
