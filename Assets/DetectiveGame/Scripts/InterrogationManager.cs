@@ -18,6 +18,7 @@ namespace DetectiveGame
         [Header("References")]
         [SerializeField] private EmotionDetector _emotionDetector;
         [SerializeField] private RecordAudio _voiceAnalyzer;
+        [SerializeField] private VisionAnalyzer _visionAnalyzer;
 
         [Tooltip("For Local mode: drag the LLM Detective GameObject here")]
         [SerializeField] private MonoBehaviour _detectiveAgentLocal;
@@ -30,15 +31,19 @@ namespace DetectiveGame
 
         [Header("Settings")]
         [SerializeField] private bool _injectEmotionIntoPrompt = true;
+        [SerializeField] private bool _useVisionAnalysis = true;
+
+        [Tooltip("Analyze vision every N messages (1 = every message, 3 = every 3rd message)")]
+        [SerializeField] private int _visionAnalysisFrequency = 2;
 
         [TextArea(3, 6)]
         [SerializeField]
         private string _emotionSystemSuffix =
-            "\n\nIMPORTANT: Each message from the player includes notes about their current facial expression and voice emotion. " +
-            "Use BOTH to inform your questioning. If their face looks calm but their voice is nervous, they are trying to hide something. " +
-            "If their face and voice both show anger, you hit a nerve. If their voice is sad but face is neutral, they may be suppressing grief. " +
-            "React naturally as a detective reading body language and tone of voice. " +
-            "Do NOT explicitly say 'I can see you look nervous' or 'your voice sounds shaky' - instead react naturally.";
+            "\n\nIMPORTANT: Each message from the player includes notes about their current facial expression, voice emotion, and sometimes a visual description of their appearance and surroundings. " +
+            "Use ALL of this to inform your questioning. If their face looks calm but their voice is nervous, they are trying to hide something. " +
+            "If you see something interesting in their appearance or surroundings, you can reference it naturally. " +
+            "React naturally as a detective reading body language, tone, and visual cues. " +
+            "Do NOT explicitly say 'I can see you look nervous' or reference the emotion data directly - react naturally like a real detective.";
 
         private List<string> _conversationLog = new List<string>();
         private string _currentDetectiveText = "";
@@ -46,6 +51,8 @@ namespace DetectiveGame
         private bool _isReady = false;
         private string _streamingText = "";
         private bool _isSpeaking = false;
+        private int _messageCount = 0;
+        private string _lastVisionDescription = "";
 
         public string CurrentDetectiveText => _currentDetectiveText;
         public bool IsWaitingForResponse => _isWaitingForResponse;
@@ -74,6 +81,12 @@ namespace DetectiveGame
                 await agent.Warmup();
                 _isReady = true;
 
+                // Get initial vision on startup
+                if (_useVisionAnalysis && _visionAnalyzer != null)
+                {
+                    _visionAnalyzer.AnalyzeCurrentFrame(desc => _lastVisionDescription = desc);
+                }
+
                 string response = await agent.Chat(
                     "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
                     null, null, true);
@@ -101,9 +114,23 @@ namespace DetectiveGame
 
                 _isReady = true;
 
-                _openRouterLLM.SendMessage(
-                    "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
-                    OnOpenRouterResponse);
+                // Get initial vision on startup
+                if (_useVisionAnalysis && _visionAnalyzer != null)
+                {
+                    _visionAnalyzer.AnalyzeCurrentFrame(desc =>
+                    {
+                        _lastVisionDescription = desc;
+                        string openingMessage = "[The suspect has just sat down in the interrogation room. " +
+                            "Visual observation: " + desc + " Begin your questioning.]";
+                        _openRouterLLM.SendMessage(openingMessage, OnOpenRouterResponse);
+                    });
+                }
+                else
+                {
+                    _openRouterLLM.SendMessage(
+                        "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
+                        OnOpenRouterResponse);
+                }
             }
         }
 
@@ -112,21 +139,43 @@ namespace DetectiveGame
             if (_isWaitingForResponse || !_isReady || string.IsNullOrEmpty(playerMessage)) return;
 
             _isWaitingForResponse = true;
+            _messageCount++;
 
+            // Trigger vision analysis periodically
+            bool doVision = _useVisionAnalysis && _visionAnalyzer != null &&
+                           (_messageCount % _visionAnalysisFrequency == 0);
+
+            if (doVision)
+            {
+                _visionAnalyzer.AnalyzeCurrentFrame(desc =>
+                {
+                    _lastVisionDescription = desc;
+                    SendWithAllContext(playerMessage);
+                });
+            }
+            else
+            {
+                SendWithAllContext(playerMessage);
+            }
+        }
+
+        private void SendWithAllContext(string playerMessage)
+        {
             string faceEmotion = GetFaceEmotionContext();
             string voiceEmotion = GetVoiceEmotionContext();
 
-            string messageWithContext;
+            string messageWithContext = playerMessage;
 
             if (_injectEmotionIntoPrompt)
             {
                 messageWithContext = playerMessage +
                     "\n[Player's facial expression: " + faceEmotion + "]" +
                     "\n[Player's voice tone: " + voiceEmotion + "]";
-            }
-            else
-            {
-                messageWithContext = playerMessage;
+
+                if (!string.IsNullOrEmpty(_lastVisionDescription))
+                {
+                    messageWithContext += "\n[Visual observation: " + _lastVisionDescription + "]";
+                }
             }
 
             _conversationLog.Add("[Player]: " + playerMessage);
@@ -142,7 +191,6 @@ namespace DetectiveGame
             }
         }
 
-        // --- Local LLM ---
         private async void SendToLocalLLM(string message)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -162,7 +210,6 @@ namespace DetectiveGame
 #endif
         }
 
-        // --- OpenRouter ---
         private void OnOpenRouterResponse(string response)
         {
             _currentDetectiveText = response;
@@ -171,7 +218,6 @@ namespace DetectiveGame
             SpeakText(response);
         }
 
-        // --- TTS ---
         private void SpeakText(string text)
         {
             if (_piperTTS == null)

@@ -613,10 +613,13 @@ MonoBehaviour:
   _llmMode: 0
   _emotionDetector: {fileID: 1064799471}
   _voiceAnalyzer: {fileID: 1984050315}
+  _visionAnalyzer: {fileID: 1145441792}
   _detectiveAgentLocal: {fileID: 2133527781}
   _openRouterLLM: {fileID: 1422518689}
   _piperTTS: {fileID: 1278242821}
   _injectEmotionIntoPrompt: 1
+  _useVisionAnalysis: 1
+  _visionAnalysisFrequency: 1
   _emotionSystemSuffix: '
 
 
@@ -641,6 +644,62 @@ MonoBehaviour:
   _interrogationManager: {fileID: 1064799473}
   _recordAudio: {fileID: 1984050315}
   pushToTalkKey: 32
+--- !u!1 &1145441791
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1145441793}
+  - component: {fileID: 1145441792}
+  m_Layer: 0
+  m_Name: VisionAnalyzer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1145441792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1145441791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57170a0fc94ddc04c8160e5ceed1965f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.VisionAnalyzer
+  _apiKey: YOUR_OPENROUTER_API_KEY_HERE
+  _model: anthropic/claude-3-haiku
+  _apiUrl: https://openrouter.ai/api/v1/chat/completions
+  _webCamTexture: {fileID: 0}
+  _captureWidth: 512
+  _captureHeight: 384
+  _visionPrompt: 'You are assisting a detective in an interrogation. Briefly describe
+    what you see about this person in 1-2 sentences. Focus on: their appearance (hair,
+    clothing, accessories, facial hair, glasses), anything they are holding, and
+    notable objects visible behind them or near them. Be factual and concise. Do
+    not speculate about emotions. Example: ''Male with short dark hair, wearing a
+    grey t-shirt. A keyboard and two monitors visible behind them.'''
+--- !u!4 &1145441793
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1145441791}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 997.8217, y: 266.35684, z: -254.96823}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &1229135957 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3259285889726014650, guid: 5713b959e3c77a58fb258133fc8e4aef, type: 3}
@@ -1644,3 +1703,4 @@ SceneRoots:
   - {fileID: 1278242823}
   - {fileID: 1422518690}
   - {fileID: 1984050316}
+  - {fileID: 1145441793}
