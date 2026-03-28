@@ -6,6 +6,7 @@ namespace DetectiveGame
     public class VoiceInput : MonoBehaviour
     {
         [SerializeField] private InterrogationManager _interrogationManager;
+        [SerializeField] private RecordAudio _recordAudio;
 
         [Header("Settings")]
         [SerializeField] private KeyCode pushToTalkKey = KeyCode.Space;
@@ -21,7 +22,6 @@ namespace DetectiveGame
         private void Start()
         {
             _dictationRecognizer = new DictationRecognizer();
-
             _dictationRecognizer.DictationResult += OnDictationResult;
             _dictationRecognizer.DictationHypothesis += OnDictationHypothesis;
             _dictationRecognizer.DictationComplete += OnDictationComplete;
@@ -51,23 +51,35 @@ namespace DetectiveGame
             _currentTranscript = "";
             _isListening = true;
 
+            // Start speech-to-text
             if (_dictationRecognizer.Status == SpeechSystemStatus.Stopped)
             {
                 _dictationRecognizer.Start();
-                Debug.Log("[VoiceInput] Listening...");
+                Debug.Log("[VoiceInput] Dictation started.");
+            }
+
+            // Also start audio recording for voice emotion analysis
+            if (_recordAudio != null)
+            {
+                _recordAudio.StartRecording();
             }
         }
 
         private void StopListening()
         {
             if (!_isListening) return;
-
             _isListening = false;
 
             if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
             {
                 _dictationRecognizer.Stop();
-                Debug.Log("[VoiceInput] Stopped listening.");
+                Debug.Log("[VoiceInput] Dictation stopped.");
+            }
+
+            // Stop audio recording — this triggers upload to Python server
+            if (_recordAudio != null)
+            {
+                _recordAudio.StopRecording();
             }
         }
 

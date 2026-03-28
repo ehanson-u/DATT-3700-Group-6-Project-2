@@ -17,6 +17,7 @@ namespace DetectiveGame
 
         [Header("References")]
         [SerializeField] private EmotionDetector _emotionDetector;
+        [SerializeField] private RecordAudio _voiceAnalyzer;
 
         [Tooltip("For Local mode: drag the LLM Detective GameObject here")]
         [SerializeField] private MonoBehaviour _detectiveAgentLocal;
@@ -33,10 +34,11 @@ namespace DetectiveGame
         [TextArea(3, 6)]
         [SerializeField]
         private string _emotionSystemSuffix =
-            "\n\nIMPORTANT: Each message from the player includes a note about their current facial expression. " +
-            "Use this to inform your questioning. If they look nervous, press harder. If they look happy during serious questions, be suspicious. " +
-            "If they look angry, note it. React naturally as a detective would to body language. " +
-            "Do NOT explicitly say 'I can see you look nervous' - instead react naturally, like a real detective reading body language.";
+            "\n\nIMPORTANT: Each message from the player includes notes about their current facial expression and voice emotion. " +
+            "Use BOTH to inform your questioning. If their face looks calm but their voice is nervous, they are trying to hide something. " +
+            "If their face and voice both show anger, you hit a nerve. If their voice is sad but face is neutral, they may be suppressing grief. " +
+            "React naturally as a detective reading body language and tone of voice. " +
+            "Do NOT explicitly say 'I can see you look nervous' or 'your voice sounds shaky' - instead react naturally.";
 
         private List<string> _conversationLog = new List<string>();
         private string _currentDetectiveText = "";
@@ -111,28 +113,32 @@ namespace DetectiveGame
 
             _isWaitingForResponse = true;
 
-            string emotionContext = GetEmotionContext();
-            string messageWithEmotion;
+            string faceEmotion = GetFaceEmotionContext();
+            string voiceEmotion = GetVoiceEmotionContext();
+
+            string messageWithContext;
 
             if (_injectEmotionIntoPrompt)
             {
-                messageWithEmotion = playerMessage + "\n[Player's facial expression: " + emotionContext + "]";
+                messageWithContext = playerMessage +
+                    "\n[Player's facial expression: " + faceEmotion + "]" +
+                    "\n[Player's voice tone: " + voiceEmotion + "]";
             }
             else
             {
-                messageWithEmotion = playerMessage;
+                messageWithContext = playerMessage;
             }
 
             _conversationLog.Add("[Player]: " + playerMessage);
-            _conversationLog.Add("[Emotion: " + emotionContext + "]");
+            _conversationLog.Add("[Face: " + faceEmotion + " | Voice: " + voiceEmotion + "]");
 
             if (_llmMode == LLMMode.Local)
             {
-                SendToLocalLLM(messageWithEmotion);
+                SendToLocalLLM(messageWithContext);
             }
             else
             {
-                _openRouterLLM.SendMessage(messageWithEmotion, OnOpenRouterResponse);
+                _openRouterLLM.SendMessage(messageWithContext, OnOpenRouterResponse);
             }
         }
 
@@ -199,10 +205,17 @@ namespace DetectiveGame
         {
         }
 
-        private string GetEmotionContext()
+        private string GetFaceEmotionContext()
         {
             if (_emotionDetector == null) return "neutral (0.00)";
             return _emotionDetector.CurrentEmotion + " (" + _emotionDetector.CurrentConfidence.ToString("F2") + ")";
+        }
+
+        private string GetVoiceEmotionContext()
+        {
+            if (_voiceAnalyzer == null) return "not analyzed";
+            if (_voiceAnalyzer.IsAnalyzing) return "analyzing...";
+            return _voiceAnalyzer.LastVoiceEmotion + " (" + _voiceAnalyzer.LastVoiceConfidence + ")";
         }
 
         public void CancelResponse()

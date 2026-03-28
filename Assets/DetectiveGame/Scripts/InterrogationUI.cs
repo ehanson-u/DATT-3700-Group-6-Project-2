@@ -1,6 +1,9 @@
-using UnityEngine;
-using System.Collections.Generic;
+using DetectiveGame;
+using LLMUnity;
 using Mediapipe.Unity.Sample.FaceLandmarkDetection;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
 
 namespace DetectiveGame
 {
@@ -9,6 +12,7 @@ namespace DetectiveGame
         [SerializeField] private InterrogationManager _interrogationManager;
         [SerializeField] private EmotionDetector _emotionDetector;
         [SerializeField] private VoiceInput _voiceInput;
+        [SerializeField] private RecordAudio _voiceAnalyzer;
 
         private string _playerInput = "";
         private Vector2 _scrollPosition;
@@ -146,7 +150,7 @@ namespace DetectiveGame
                 _scrollPosition.y = contentHeight - convoHeight + 50;
             }
 
-            // Mic status indicator
+            // Mic status
             float micY = panelY + panelHeight - 130;
             if (_voiceInput != null)
             {
@@ -171,21 +175,19 @@ namespace DetectiveGame
                 }
             }
 
-            // Status text
+            // Status
             if (_interrogationManager.IsWaitingForResponse)
             {
-                GUI.Label(
-                    new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
+                GUI.Label(new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
                     "Detective is speaking...", _systemStyle);
             }
             else if (!_interrogationManager.IsReady)
             {
-                GUI.Label(
-                    new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
+                GUI.Label(new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
                     "Loading model, please wait...", _systemStyle);
             }
 
-            // Text input still works as fallback
+            // Text input
             float inputY = panelY + panelHeight - 55;
             bool canType = !_interrogationManager.IsWaitingForResponse && _interrogationManager.IsReady;
 
@@ -216,14 +218,27 @@ namespace DetectiveGame
             }
             GUI.enabled = true;
 
-            // Emotion readout
-            if (_emotionDetector != null)
+            // Emotion readouts - top left
+            if (_emotionDetector != null || _voiceAnalyzer != null)
             {
-                GUI.Box(new UnityEngine.Rect(10, 10, 200, 35), "");
-                string emo = _emotionDetector.CurrentEmotion.ToUpper();
-                float conf = _emotionDetector.CurrentConfidence;
-                _emotionBarSmall.normal.textColor = GetEmotionColor(emo.ToLower());
-                GUI.Label(new UnityEngine.Rect(15, 14, 190, 25), emo + " (" + conf.ToString("F2") + ")", _emotionBarSmall);
+                GUI.Box(new UnityEngine.Rect(10, 10, 250, 55), "");
+
+                if (_emotionDetector != null)
+                {
+                    string faceEmo = _emotionDetector.CurrentEmotion.ToUpper();
+                    float faceConf = _emotionDetector.CurrentConfidence;
+                    _emotionBarSmall.normal.textColor = GetEmotionColor(faceEmo.ToLower());
+                    GUI.Label(new UnityEngine.Rect(15, 14, 240, 20),
+                        "Face: " + faceEmo + " (" + faceConf.ToString("F2") + ")", _emotionBarSmall);
+                }
+
+                if (_voiceAnalyzer != null)
+                {
+                    string voiceEmo = _voiceAnalyzer.LastVoiceEmotion.ToUpper();
+                    _emotionBarSmall.normal.textColor = GetEmotionColor(voiceEmo.ToLower());
+                    GUI.Label(new UnityEngine.Rect(15, 36, 240, 20),
+                        "Voice: " + voiceEmo + " (" + _voiceAnalyzer.LastVoiceConfidence + ")", _emotionBarSmall);
+                }
             }
         }
 
@@ -243,6 +258,8 @@ namespace DetectiveGame
                 case "angry": return UnityEngine.Color.red;
                 case "sad": return UnityEngine.Color.cyan;
                 case "nervous": return new UnityEngine.Color(1f, 0.5f, 0f);
+                case "fearful": return new UnityEngine.Color(0.8f, 0.4f, 1f);
+                case "disgust": return new UnityEngine.Color(0.5f, 0.8f, 0.2f);
                 default: return UnityEngine.Color.white;
             }
         }
