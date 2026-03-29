@@ -1,9 +1,6 @@
-using DetectiveGame;
-using LLMUnity;
-using Mediapipe.Unity.Sample.FaceLandmarkDetection;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic;
+using Mediapipe.Unity.Sample.FaceLandmarkDetection;
 
 namespace DetectiveGame
 {
@@ -140,7 +137,6 @@ namespace DetectiveGame
                 string streamLabel = "[Detective]: " + _interrogationManager.StreamingText + " _";
                 float streamHeight = _streamingStyle.CalcHeight(new GUIContent(streamLabel), panelWidth - 40);
                 GUI.Label(new UnityEngine.Rect(5, yPos, panelWidth - 40, streamHeight), streamLabel, _streamingStyle);
-                yPos += streamHeight + 5;
             }
 
             GUI.EndScrollView();
@@ -175,11 +171,13 @@ namespace DetectiveGame
                 }
             }
 
-            // Status
-            if (_interrogationManager.IsWaitingForResponse)
+            // Status text — shows analyzing/thinking status
+            string status = _interrogationManager.StatusText;
+            if (!string.IsNullOrEmpty(status))
             {
+                _systemStyle.normal.textColor = new UnityEngine.Color(1f, 0.8f, 0.3f);
                 GUI.Label(new UnityEngine.Rect(panelX + 10, panelY + panelHeight - 85, panelWidth - 20, 25),
-                    "Detective is speaking...", _systemStyle);
+                    status, _systemStyle);
             }
             else if (!_interrogationManager.IsReady)
             {
@@ -218,7 +216,7 @@ namespace DetectiveGame
             }
             GUI.enabled = true;
 
-            // Emotion readouts - top left
+            // Emotion readouts
             if (_emotionDetector != null || _voiceAnalyzer != null)
             {
                 GUI.Box(new UnityEngine.Rect(10, 10, 250, 55), "");

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mediapipe.Unity.Sample.FaceLandmarkDetection;
@@ -33,8 +34,11 @@ namespace DetectiveGame
         [SerializeField] private bool _injectEmotionIntoPrompt = true;
         [SerializeField] private bool _useVisionAnalysis = true;
 
-        [Tooltip("Analyze vision every N messages (1 = every message, 3 = every 3rd message)")]
+        [Tooltip("Analyze vision every N messages (1 = every message, 3 = every 3rd)")]
         [SerializeField] private int _visionAnalysisFrequency = 2;
+
+        [Tooltip("Max seconds to wait for voice/vision analysis before sending anyway")]
+        [SerializeField] private float _analysisTimeout = 8f;
 
         [TextArea(3, 6)]
         [SerializeField]
@@ -53,6 +57,7 @@ namespace DetectiveGame
         private bool _isSpeaking = false;
         private int _messageCount = 0;
         private string _lastVisionDescription = "";
+        private string _statusText = "";
 
         public string CurrentDetectiveText => _currentDetectiveText;
         public bool IsWaitingForResponse => _isWaitingForResponse;
@@ -60,6 +65,7 @@ namespace DetectiveGame
         public List<string> ConversationLog => _conversationLog;
         public string StreamingText => _streamingText;
         public bool IsSpeaking => _isSpeaking;
+        public string StatusText => _statusText;
 
         private async void Start()
         {
@@ -80,12 +86,6 @@ namespace DetectiveGame
 
                 await agent.Warmup();
                 _isReady = true;
-
-                // Get initial vision on startup
-                if (_useVisionAnalysis && _visionAnalyzer != null)
-                {
-                    _visionAnalyzer.AnalyzeCurrentFrame(desc => _lastVisionDescription = desc);
-                }
 
                 string response = await agent.Chat(
                     "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
@@ -114,23 +114,9 @@ namespace DetectiveGame
 
                 _isReady = true;
 
-                // Get initial vision on startup
-                if (_useVisionAnalysis && _visionAnalyzer != null)
-                {
-                    _visionAnalyzer.AnalyzeCurrentFrame(desc =>
-                    {
-                        _lastVisionDescription = desc;
-                        string openingMessage = "[The suspect has just sat down in the interrogation room. " +
-                            "Visual observation: " + desc + " Begin your questioning.]";
-                        _openRouterLLM.SendMessage(openingMessage, OnOpenRouterResponse);
-                    });
-                }
-                else
-                {
-                    _openRouterLLM.SendMessage(
-                        "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
-                        OnOpenRouterResponse);
-                }
+                _openRouterLLM.SendMessage(
+                    "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
+                    OnOpenRouterResponse);
             }
         }
 
@@ -141,26 +127,63 @@ namespace DetectiveGame
             _isWaitingForResponse = true;
             _messageCount++;
 
-            // Trigger vision analysis periodically
+            // Start the coroutine that waits for all analysis to finish
+            StartCoroutine(GatherAnalysisAndSend(playerMessage));
+        }
+
+        private IEnumerator GatherAnalysisAndSend(string playerMessage)
+        {
+            _statusText = "Analyzing...";
+
             bool doVision = _useVisionAnalysis && _visionAnalyzer != null &&
                            (_messageCount % _visionAnalysisFrequency == 0);
 
+            bool visionDone = !doVision;
+            bool voiceDone = (_voiceAnalyzer == null);
+            string visionResult = _lastVisionDescription;
+
+            // Kick off vision analysis if needed
             if (doVision)
             {
+                _statusText = "Analyzing appearance...";
                 _visionAnalyzer.AnalyzeCurrentFrame(desc =>
                 {
+                    visionResult = desc;
                     _lastVisionDescription = desc;
-                    SendWithAllContext(playerMessage);
+                    visionDone = true;
                 });
             }
-            else
-            {
-                SendWithAllContext(playerMessage);
-            }
-        }
 
-        private void SendWithAllContext(string playerMessage)
-        {
+            // Wait for voice analyzer if it's currently processing
+            if (_voiceAnalyzer != null && _voiceAnalyzer.IsAnalyzing)
+            {
+                _statusText = "Analyzing voice...";
+            }
+
+            // Wait for everything with a timeout
+            float timer = 0f;
+            while ((!visionDone || (_voiceAnalyzer != null && _voiceAnalyzer.IsAnalyzing)) && timer < _analysisTimeout)
+            {
+                timer += Time.deltaTime;
+
+                if (!visionDone && !voiceDone)
+                    _statusText = "Analyzing voice & appearance...";
+                else if (!visionDone)
+                    _statusText = "Analyzing appearance...";
+                else if (_voiceAnalyzer != null && _voiceAnalyzer.IsAnalyzing)
+                    _statusText = "Analyzing voice...";
+
+                yield return null;
+            }
+
+            if (timer >= _analysisTimeout)
+            {
+                Debug.LogWarning("[InterrogationManager] Analysis timed out, sending with available data.");
+            }
+
+            _statusText = "Detective is thinking...";
+
+            // Now build the full message with all context
             string faceEmotion = GetFaceEmotionContext();
             string voiceEmotion = GetVoiceEmotionContext();
 
@@ -181,6 +204,12 @@ namespace DetectiveGame
             _conversationLog.Add("[Player]: " + playerMessage);
             _conversationLog.Add("[Face: " + faceEmotion + " | Voice: " + voiceEmotion + "]");
 
+            if (doVision)
+            {
+                _conversationLog.Add("[Vision: " + _lastVisionDescription + "]");
+            }
+
+            // Send to LLM
             if (_llmMode == LLMMode.Local)
             {
                 SendToLocalLLM(messageWithContext);
@@ -207,6 +236,7 @@ namespace DetectiveGame
             }
 
             _isWaitingForResponse = false;
+            _statusText = "";
 #endif
         }
 
@@ -215,6 +245,7 @@ namespace DetectiveGame
             _currentDetectiveText = response;
             _conversationLog.Add("[Detective]: " + response);
             _isWaitingForResponse = false;
+            _statusText = "";
             SpeakText(response);
         }
 
@@ -267,6 +298,7 @@ namespace DetectiveGame
         public void CancelResponse()
         {
             _isWaitingForResponse = false;
+            _statusText = "";
         }
     }
 }

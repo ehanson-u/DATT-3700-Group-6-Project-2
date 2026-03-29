@@ -12,9 +12,9 @@ namespace DetectiveGame
         [SerializeField] private string _model = "anthropic/claude-3-haiku";
         [SerializeField] private string _apiUrl = "https://openrouter.ai/api/v1/chat/completions";
 
-        [Header("Webcam")]
-        [Tooltip("Leave empty to auto-find the active webcam texture")]
-        [SerializeField] private WebCamTexture _webCamTexture;
+        [Header("Webcam Source")]
+        [Tooltip("Drag any RawImage or Renderer showing the webcam feed here. Leave empty to use screen capture.")]
+        [SerializeField] private Texture _webcamSourceTexture;
 
         [Header("Settings")]
         [SerializeField] private int _captureWidth = 512;
@@ -26,10 +26,11 @@ namespace DetectiveGame
             "You are assisting a detective in an interrogation. Briefly describe what you see about this person in 1-2 sentences. " +
             "Focus on: their appearance (hair, clothing, accessories, facial hair, glasses), " +
             "anything they are holding, and notable objects visible behind them or near them. " +
-            "Be factual and concise. Do not speculate about emotions. Example: 'Male with short dark hair, wearing a grey t-shirt. A keyboard and two monitors visible behind them.'";
+            "Be factual and concise. Example: 'Male with short dark hair, wearing a grey t-shirt. A keyboard and two monitors visible behind them.'";
 
         public string LastDescription { get; private set; } = "";
         public bool IsAnalyzing { get; private set; } = false;
+        public bool IsReady { get; private set; } = true;
 
         public void AnalyzeCurrentFrame(Action<string> onResult)
         {
@@ -39,50 +40,63 @@ namespace DetectiveGame
                 return;
             }
 
-            // Try to find webcam texture if not assigned
-            WebCamTexture cam = GetWebcamTexture();
-            if (cam == null || !cam.isPlaying)
-            {
-                Debug.LogWarning("[VisionAnalyzer] No active webcam found.");
-                onResult?.Invoke("Could not capture image.");
-                return;
-            }
-
-            StartCoroutine(CaptureAndAnalyze(cam, onResult));
+            StartCoroutine(CaptureAndAnalyze(onResult));
         }
 
-        private WebCamTexture GetWebcamTexture()
-        {
-            if (_webCamTexture != null) return _webCamTexture;
-
-            // Try to find any active WebCamTexture
-            WebCamTexture[] allCams = FindObjectsByType<WebCamTexture>(FindObjectsSortMode.None);
-            if (allCams != null && allCams.Length > 0) return allCams[0];
-
-            return null;
-        }
-
-        private IEnumerator CaptureAndAnalyze(WebCamTexture cam, Action<string> onResult)
+        private IEnumerator CaptureAndAnalyze(Action<string> onResult)
         {
             IsAnalyzing = true;
 
-            // Capture frame to Texture2D
-            Texture2D frame = new Texture2D(cam.width, cam.height, TextureFormat.RGB24, false);
-            frame.SetPixels(cam.GetPixels());
-            frame.Apply();
+            yield return new WaitForEndOfFrame();
+
+            Texture2D frame = null;
+
+            // Try to find the webcam texture MediaPipe is using
+            Texture sourceTexture = _webcamSourceTexture;
+
+            if (sourceTexture == null)
+            {
+                // Search for any active WebCamTexture in the scene
+                WebCamTexture[] allCams = FindObjectsByType<WebCamTexture>(FindObjectsSortMode.None);
+                if (allCams != null && allCams.Length > 0)
+                {
+                    sourceTexture = allCams[0];
+                }
+            }
+
+            if (sourceTexture != null)
+            {
+                // Copy from the existing webcam texture
+                RenderTexture rt = RenderTexture.GetTemporary(sourceTexture.width, sourceTexture.height);
+                Graphics.Blit(sourceTexture, rt);
+
+                RenderTexture previous = RenderTexture.active;
+                RenderTexture.active = rt;
+
+                frame = new Texture2D(sourceTexture.width, sourceTexture.height, TextureFormat.RGB24, false);
+                frame.ReadPixels(new UnityEngine.Rect(0, 0, sourceTexture.width, sourceTexture.height), 0, 0);
+                frame.Apply();
+
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(rt);
+            }
+            else
+            {
+                // Fallback: screen capture
+                Debug.LogWarning("[VisionAnalyzer] No webcam texture found, using screen capture.");
+                frame = ScreenCapture.CaptureScreenshotAsTexture();
+            }
 
             // Resize for smaller upload
             Texture2D resized = ResizeTexture(frame, _captureWidth, _captureHeight);
             Destroy(frame);
 
-            // Convert to base64 JPEG
             byte[] jpgBytes = resized.EncodeToJPG(75);
             Destroy(resized);
 
             string base64Image = Convert.ToBase64String(jpgBytes);
             Debug.Log("[VisionAnalyzer] Captured frame. Size: " + jpgBytes.Length + " bytes.");
 
-            // Send to API
             yield return SendToVisionAPI(base64Image, onResult);
 
             IsAnalyzing = false;
@@ -151,7 +165,6 @@ namespace DetectiveGame
 
         private string BuildVisionRequestJson(string base64Image)
         {
-            // OpenRouter/OpenAI vision format with image_url using base64
             string escaped_prompt = EscapeJson(_visionPrompt);
 
             return "{" +

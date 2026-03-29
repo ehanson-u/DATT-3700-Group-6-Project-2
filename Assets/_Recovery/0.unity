@@ -610,17 +610,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af68859be3b57e47bd5467cac41a5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.InterrogationManager
-  _llmMode: 0
+  _llmMode: 1
   _emotionDetector: {fileID: 1064799471}
   _voiceAnalyzer: {fileID: 1984050315}
-  _visionAnalyzer: {fileID: 1145441792}
+  _visionAnalyzer: {fileID: 0}
   _detectiveAgentLocal: {fileID: 2133527781}
   _openRouterLLM: {fileID: 1422518689}
   _piperTTS: {fileID: 1278242821}
   _injectEmotionIntoPrompt: 1
   _useVisionAnalysis: 1
-  _visionAnalysisFrequency: 1
-  _analysisTimeout: 8
+  _visionAnalysisFrequency: 2
   _emotionSystemSuffix: '
 
 
@@ -645,62 +644,6 @@ MonoBehaviour:
   _interrogationManager: {fileID: 1064799473}
   _recordAudio: {fileID: 1984050315}
   pushToTalkKey: 32
---- !u!1 &1145441791
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1145441793}
-  - component: {fileID: 1145441792}
-  m_Layer: 0
-  m_Name: VisionAnalyzer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1145441792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1145441791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57170a0fc94ddc04c8160e5ceed1965f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.VisionAnalyzer
-  _apiKey: 
-  _model: google/gemini-3-flash-preview
-  _apiUrl: https://openrouter.ai/api/v1/chat/completions
-  _webcamSourceTexture: {fileID: 0}
-  _captureWidth: 512
-  _captureHeight: 384
-  _visionPrompt: 'You are assisting a detective in an interrogation. Briefly describe
-    what you see about this person in 1-2 sentences. Focus on: their appearance (hair,
-    clothing, accessories, facial hair, glasses), anything they are holding, and
-    notable objects visible behind them or near them. Be factual and concise. Do
-    not speculate about emotions. Example: ''Male with short dark hair, wearing a
-    grey t-shirt. A keyboard and two monitors visible behind them.'''
---- !u!4 &1145441793
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1145441791}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 997.8217, y: 266.35684, z: -254.96823}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &1229135957 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3259285889726014650, guid: 5713b959e3c77a58fb258133fc8e4aef, type: 3}
@@ -1027,10 +970,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef6db6dfde6042c4194a988812b870b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.OpenRouterLLM
-  _apiKey: 
-  _model: google/gemini-2.5-flash-lite
+  _apiKey: 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
+  _model: deepseek/deepseek-v3.2
   _apiUrl: https://openrouter.ai/api/v1/chat/completions
-  _maxTokens: 50000
+  _maxTokens: 1000
   _temperature: 0.8
   _systemPrompt: 'You are a detective trying to get to the bottom of a likely attempted
     murder case. You are to be proactive in questioning the user.
@@ -1185,63 +1128,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1001 &1928856590
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.39927
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -6.37237
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
-      propertyPath: m_Name
-      value: noir
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
 --- !u!1 &1969388814
 GameObject:
   m_ObjectHideFlags: 0
@@ -1253,7 +1139,6 @@ GameObject:
   - component: {fileID: 1969388817}
   - component: {fileID: 1969388816}
   - component: {fileID: 1969388815}
-  - component: {fileID: 1969388818}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1335,50 +1220,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1969388818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1969388814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
-  m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
-  m_Cameras: []
-  m_RendererIndex: -1
-  m_VolumeLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
-  m_AntialiasingQuality: 2
-  m_StopNaN: 0
-  m_Dithering: 0
-  m_ClearDepth: 1
-  m_AllowXRRendering: 1
-  m_AllowHDROutput: 1
-  m_UseScreenCoordOverride: 0
-  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
-  m_RequiresDepthTexture: 0
-  m_RequiresColorTexture: 0
-  m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
-    m_JitterScale: 1
-    m_MipBias: 0
-    m_VarianceClampScale: 0.9
-    m_ContrastAdaptiveSharpening: 0
-  m_Version: 2
 --- !u!1 &1984050313
 GameObject:
   m_ObjectHideFlags: 0
@@ -1806,5 +1647,3 @@ SceneRoots:
   - {fileID: 1278242823}
   - {fileID: 1422518690}
   - {fileID: 1984050316}
-  - {fileID: 1145441793}
-  - {fileID: 1928856590}
