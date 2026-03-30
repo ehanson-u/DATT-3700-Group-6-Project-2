@@ -6,6 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/MediaPipeUnity/Samples/Scenes/IntroScene.unity
+    guid: a1840c8c15ac8436c9a87c58eb485fc6
+  - enabled: 1
+    path: Assets/MediaPipeUnity/Samples/Scenes/Face Landmark Detection/Face Landmark
+      Detection.unity
+    guid: df0fc3b9f7146dee593f8b5660ae773c
+  - enabled: 1
     path: Assets/Scenes/PiperScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
