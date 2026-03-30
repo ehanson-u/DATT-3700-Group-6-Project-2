@@ -173,7 +173,7 @@ public class PiperManager : MonoBehaviour
     private IEnumerator SynthesizeAndPlayCoroutine(string text)
     {
         string delayPunctuationPattern = @"([,.?!;:])";
-        string nonDelayPunctuationPattern = @"[^\w\s,.?!;:]";
+        string nonDelayPunctuationPattern = @"[^\w\s,.?!;:'\-]";
 
         string[] parts = Regex.Split(text, delayPunctuationPattern);
 

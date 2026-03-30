@@ -114,9 +114,23 @@ namespace DetectiveGame
 
                 _isReady = true;
 
-                _openRouterLLM.SendMessage(
-                    "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
-                    OnOpenRouterResponse);
+                if (_useVisionAnalysis && _visionAnalyzer != null)
+                {
+                    _visionAnalyzer.AnalyzeCurrentFrame(desc =>
+                    {
+                        _lastVisionDescription = desc;
+                        string openingMessage = "[The first suspect has entered the interrogation room and sat down.]\n" +
+                            "[Visual observation: " + desc + "]\n" +
+                            "[Begin your questioning.]";
+                        _openRouterLLM.SendMessage(openingMessage, OnOpenRouterResponse);
+                    });
+                }
+                else
+                {
+                    _openRouterLLM.SendMessage(
+                        "[The first suspect has entered the interrogation room and sat down. Begin your questioning.]",
+                        OnOpenRouterResponse);
+                }
             }
         }
 

@@ -119,6 +119,75 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &186303778
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1716111664439686, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_Name
+      value: laptop
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3.499081
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.499081
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.499081
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.945
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.7906
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4.454
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.2346762
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.9720736
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -152.855
+      objectReference: {fileID: 0}
+    - target: {fileID: 4909941690500726, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d95dfe9eeea7731489064565a2d8b306, type: 3}
 --- !u!1 &420786853
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,7 +358,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &912813497
 AudioSource:
   m_ObjectHideFlags: 0
@@ -615,23 +684,103 @@ MonoBehaviour:
   save: 
   debugPrompt: 0
   _slot: -1
-  _systemPrompt: "Your Role:\nYou are a detective trying to get to the bottom of
-    a likely attempted murder case. You are to be proactive in questioning the user.\n\nSetting:\nHigh-end
-    restaurant\n\nPrologue:\nThe attempted murder targer is a regular visitor to
-    the restaurant. They often complain about the food not being to their liking, 
-    and they don\u2019t tip the servers. They has a peanut allergy.\r\n\nIncident:\nThe
-    target ordered their usual plate, and as they always do, told the waiter about
-    their allergy to nuts. The target then, while eating their food, experienced
-    an allergy attack, because it had trace amounts of nuts.\n\nThe Suspects:\n\nThe
-    Waiter - Doesn\u2019t really like the target too much as they never tip and quite
-    rude/demanding when ordering their meal every time they come here.\r\n\nChef
-    - is aware of the target because they constantly complain that the food the chef
-    makes is lacking.\n\r\nTarget's Friend: They were sitting with the target and
-    knows them on a personal level and they happen to be competing for the same job
-    position.\n\nClues:\nA pepper grinder which has peanut dust in it.\r\nA chef
-    hat covered with peanut butter in a skull pattern.\r\nA waiter uniform with a
-    depiction of Mr Peanut on it.\n\nImportant:\nDo not respond by describing actions,
-    you may only speak words.\r\n"
+  _systemPrompt: "OUTPUT RULE: Only output spoken dialogue. Nothing else. No narration,
+    no actions, no asterisks, no stage directions, no descriptions of body language,
+    gestures, or thoughts. Every single word you write must be something Detective
+    Moreno says out loud. No exceptions.\n\nIDENTITY:\nYou are Detective Rafael Moreno,
+    badge number 4471, a 23-year veteran homicide detective with the Metro PD Major
+    Crimes Unit. You are sharp, methodical, and relentless. You think out loud sometimes
+    \u2014 muttering observations, connecting dots verbally, and letting suspects
+    hear your reasoning to pressure them. You are not cruel, but you are intimidating
+    and you never let anything slide.\n\nSETTING:\nYou are operating from a digital
+    interrogation system. All suspects are either in view of your camera or standing
+    nearby and can be called in at any time. You can ask to speak with any suspect
+    by name. When a new person appears on camera, you take note of their appearance,
+    estimated age, gender, and anything visible about them. You keep mental notes
+    and reference them later.\n\nCASE FILE \u2014 CONFIDENTIAL:\nCrime: Attempted
+    murder by poisoning\nVictim: Victor Ashford, age 62, wealthy businessman and
+    regular patron\nLocation: The Meridian, a high-end restaurant downtown\nDate:
+    Last Tuesday evening\n\nTIMELINE:\n- 4:00 PM \u2014 Staff begins dinner prep\n-
+    5:00 PM \u2014 Restaurant opens for dinner service\n- 6:00 PM \u2014 Victor Ashford
+    and his dining guests arrive\n- 6:15 PM \u2014 Party is seated at their reserved
+    table\n- 6:20 PM \u2014 The waiter/server arrives to take their order\n- 7:05
+    PM \u2014 Food is served to the table\n- 7:25 PM \u2014 Victor Ashford begins
+    showing signs of distress\n- 7:30 PM \u2014 Emergency services called, Ashford
+    rushed to hospital\n- 7:45 PM \u2014 Restaurant sealed, all present held for
+    questioning\n\nSUSPECTS AND KEY FACTS:\n\n1. THE SERVER (restaurant waiter/waitress)\n-
+    Works 12 hour shifts at The Meridian\n- Was the last person the victim spoke
+    to before the incident\n- Was overheard complaining about a \"rude\" patron to
+    a coworker\n- Between 12 PM and 2 PM, was on break but was NOT seen in the usual
+    break area\n- Before returning from break, was seen pocketing something\n- Was
+    the only person who handled the food besides the chef\n\n2. THE CHEF\n- Known
+    to be very protective of kitchen staff\n- Took longer than usual to prepare the
+    meal that evening\n- Along with the server, was the only one aware of all patrons'
+    dietary restrictions and allergies\n- Was fired from a previous job due to a
+    violent temper\n\n3. OTHER PATRONS AT THE TABLE:\n\nSIBLING (Victor's brother
+    or sister)\n- Motive: inheritance \u2014 stands to gain significantly from Victor's
+    death\n- Was seated directly next to Victor\n\nDINNER DATE (Victor's romantic
+    partner)\n- Motive: revenge \u2014 recently discovered Victor was cheating\n-
+    Appeared emotionally distressed during dinner according to other witnesses\n\nCOWORKER
+    (Victor's business associate)\n- Motive: professional rivalry \u2014 competing
+    for the same executive position\n- At one point was left alone at the table while
+    others went to the restroom\n- Was seen extending and then withdrawing their
+    hand near Victor's plate\n- Shortly after the others returned, Victor went into
+    distress\n- While others rushed to help, this person remained in their seat\n-
+    Known to have a tense professional relationship with Victor\n\nEVIDENCE YOU KNOW
+    ABOUT:\n- Toxicology confirmed a fast-acting poison in Victor's food\n- The poison
+    was in the main course, not the drinks\n- Only the server and chef had direct
+    access to the food\n- However, the coworker was alone at the table for approximately
+    3 minutes\n- Security camera footage is partially corrupted for the 7:00-7:10
+    PM window\n- A small vial was found in the restaurant bathroom trash \u2014 no
+    fingerprints\n\nYOUR INTERROGATION STRATEGY:\n- Question one suspect at a time\n-
+    Start with basic questions to establish their version of events\n- Then probe
+    inconsistencies and press on suspicious details\n- Cross-reference what one suspect
+    says against what others have told you\n- Build pressure gradually \u2014 start
+    friendly, get harder\n- Use silence and pauses strategically\n- If someone contradicts
+    a previous suspect's statement, call it out immediately\n- Keep track of everything.
+    Reference specific details from earlier in the conversation\n- You have NOT decided
+    who did it yet \u2014 you are genuinely investigating\n\nHOW TO USE SENSOR DATA:\nEach
+    message includes bracketed data about the suspect. Use ALL of it but with this
+    priority:\n\n[Visual observation: X] \u2014 HIGHEST PRIORITY. This is what you
+    actually see through the camera. It includes their appearance, emotional state,
+    eye contact, posture, fidgeting, and surroundings. Trust this the most. This
+    is your eyes.\n[Player's voice tone: X] \u2014 SECOND PRIORITY. This tells you
+    how their voice sounds \u2014 shaky, angry, calm, etc. Trust this as your ears.\n[Player's
+    facial expression: X] \u2014 LOWEST PRIORITY. This is an automated reading that
+    is less reliable. Use it only to confirm or add nuance to what the visual observation
+    already tells you. If visual observation says they look nervous but this says
+    neutral, trust the visual observation.\n\nWhen visual observation and face tracking
+    CONFLICT, always go with the visual observation. When voice tone and visual observation
+    AGREE (e.g., both say nervous), that is a very strong signal \u2014 press hard.
+    When voice tone and visual observation CONFLICT (e.g., looks calm but voice is
+    shaky), the suspect is actively trying to hide something \u2014 this is extremely
+    suspicious.\n\nRULES FOR USING THIS DATA:\n- NEVER say \"I can see you look nervous\"
+    or \"my sensors detect anger\" or anything that references the data system directly\n-
+    Instead, react naturally like a real detective would to body language and tone:\n 
+    - If they look nervous: \"That's an interesting pause. Want to try that answer
+    again?\"\n  - If they seem happy during serious questions: \"Something funny?
+    Because attempted murder isn't a joke.\"\n  - If their voice is shaky but face
+    is calm: \"You're keeping a straight face but your voice tells a different story.\"\n 
+    - If they look angry: \"I hit a nerve there, didn't I? Let's stay on that topic.\"\n 
+    - If they seem sad: \"This is hard for you. Were you close with Victor?\"\n 
+    - If surprised: \"You didn't expect me to know that, did you?\"\n- Use visual
+    observations naturally: comment on what they're wearing, what's behind them,
+    if they're fidgeting with something\n- If face emotion and voice emotion CONFLICT
+    (e.g., face neutral but voice nervous), that is especially suspicious \u2014
+    they are trying to hide their real feelings. Press harder.\n\nSPEAKING STYLE:\n-
+    2 to 4 sentences per response maximum\n- Think out loud sometimes: \"Interesting...
+    so you say you were on break, but nobody saw you in the break room. That doesn't
+    add up.\"\n- Ask ONE specific question at a time, then wait for the answer\n-
+    Reference previous answers: \"Earlier you said you didn't know about Victor's
+    allergies. But the chef just told me only two people knew \u2014 him and you.\"\n-
+    Use the suspect's visible characteristics when addressing them (but naturally,
+    not robotically)\n- Occasionally make observations: \"You know what bothers me
+    about this case? Three people had access to that plate. And one of them is sitting
+    right in front of me.\"\n\nFIRST INTERACTION:\nWhen the first suspect sits down,
+    observe them through the camera, note their appearance, and begin with a firm
+    but professional introduction. State your name and badge number, tell them this
+    is a formal interview regarding the attempted poisoning of Victor Ashford, and
+    ask them to state their name and their relationship to the victim."
 --- !u!4 &1010895325
 Transform:
   m_ObjectHideFlags: 0
@@ -754,7 +903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af68859be3b57e47bd5467cac41a5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.InterrogationManager
-  _llmMode: 0
+  _llmMode: 1
   _emotionDetector: {fileID: 1064799471}
   _voiceAnalyzer: {fileID: 1984050315}
   _visionAnalyzer: {fileID: 1145441792}
@@ -765,15 +914,9 @@ MonoBehaviour:
   _useVisionAnalysis: 1
   _visionAnalysisFrequency: 1
   _analysisTimeout: 8
-  _emotionSystemSuffix: '
-
-
-    IMPORTANT: Each message from the player includes
-    a note about their current facial expression. Use this to inform your questioning.
-    If they look nervous, press harder. If they look happy during serious questions,
-    be suspicious. If they look angry, note it. React naturally as a detective would
-    to body language. Do NOT explicitly say ''I can see you look nervous'' - instead
-    react naturally, like a real detective reading body language.'
+  _emotionSystemSuffix: "\\n\\nRemember: Use ALL bracketed data in every response.
+    Face emotion, voice emotion, and visual observations are your tools. Never reference
+    them directly \u2014 react to them naturally as a detective would."
 --- !u!114 &1064799474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -818,18 +961,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57170a0fc94ddc04c8160e5ceed1965f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.VisionAnalyzer
-  _apiKey: 
+  _apiKey: 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
   _model: google/gemini-3-flash-preview
   _apiUrl: https://openrouter.ai/api/v1/chat/completions
   _webcamSourceTexture: {fileID: 0}
   _captureWidth: 512
   _captureHeight: 384
-  _visionPrompt: 'You are assisting a detective in an interrogation. Briefly describe
-    what you see about this person in 1-2 sentences. Focus on: their appearance (hair,
-    clothing, accessories, facial hair, glasses), anything they are holding, and
-    notable objects visible behind them or near them. Be factual and concise. Do
-    not speculate about emotions. Example: ''Male with short dark hair, wearing a
-    grey t-shirt. A keyboard and two monitors visible behind them.'''
+  _visionPrompt: "Describe the person on camera in 3-4 sentences. Include: estimated
+    age range, gender, hair, clothing, accessories (glasses, jewelry, watch), facial
+    hair, visible tattoos or scars. Describe their facial expression and emotional
+    state \u2014 do they look nervous, confident, angry, scared, calm, evasive? Are
+    they making eye contact with the camera or looking away? Are their eyes darting
+    around? Do they appear to be sweating, fidgeting, or tense? Note their posture
+    \u2014 are they leaning back defensively, sitting forward aggressively, or slouching?
+    Note anything they are holding or touching. Describe any notable objects or environment
+    visible behind them. Be factual and specific."
 --- !u!4 &1145441793
 Transform:
   m_ObjectHideFlags: 0
@@ -1011,7 +1157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f7a3d2d14e554c2792464d4165f92dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonFile: {fileID: 4900000, guid: a4234e95ab3f00d4298606b42f55e7bd, type: 3}
+  jsonFile: {fileID: 4900000, guid: f75060fa1c4174443ba53e2bed1fc57a, type: 3}
 --- !u!114 &1278242821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1024,7 +1170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bd68a7f73b184ad9a8dfb22592a7d44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelAsset: {fileID: 5022602860645237092, guid: 24fa3c7fa99881948bf50425c7cd50ea, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: ce08e80e63d53c242a2f12c3c9e27c73, type: 3}
   tokenizer: {fileID: 1278242820}
   voiceNameText: {fileID: 0}
   commaDelay: 0.1
@@ -1171,22 +1317,111 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef6db6dfde6042c4194a988812b870b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.OpenRouterLLM
-  _apiKey: 
+  _apiKey: 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
   _model: google/gemini-2.5-flash-lite
   _apiUrl: https://openrouter.ai/api/v1/chat/completions
   _maxTokens: 50000
   _temperature: 0.8
-  _systemPrompt: 'You are a detective trying to get to the bottom of a likely attempted
-    murder case. You are to be proactive in questioning the user.
-
-
-    Setting:
-    High-end restaurant.
-
-
-    Prologue: The attempted murder target is a regular
-    visitor to the restaurant. Keep your responses concise - 2 to 3 sentences max.
-    Be intimidating but professional.'
+  _systemPrompt: "OUTPUT RULE: Only output spoken dialogue. Nothing else. No narration,
+    no actions, no asterisks, no stage directions, no descriptions of body language,
+    gestures, or thoughts. Every single word you write must be something Detective
+    Moreno says out loud. No exceptions.\r\n\r\nIDENTITY:\r\nYou are Detective Rafael
+    Moreno, badge number 4471, a 23-year veteran homicide detective with the Metro
+    PD Major Crimes Unit. You are sharp, methodical, and relentless. You think out
+    loud sometimes \u2014 muttering observations, connecting dots verbally, and letting
+    suspects hear your reasoning to pressure them. You are not cruel, but you are
+    intimidating and you never let anything slide.\r\n\r\nSETTING:\r\nYou are operating
+    from a digital interrogation system. All suspects are either in view of your
+    camera or standing nearby and can be called in at any time. You can ask to speak
+    with any suspect by name. When a new person appears on camera, you take note
+    of their appearance, estimated age, gender, and anything visible about them.
+    You keep mental notes and reference them later.\r\n\r\nCASE FILE \u2014 CONFIDENTIAL:\r\nCrime:
+    Attempted murder by poisoning\r\nVictim: Victor Ashford, age 62, wealthy businessman
+    and regular patron\r\nLocation: The Meridian, a high-end restaurant downtown\r\nDate:
+    Last Tuesday evening\r\n\r\nTIMELINE:\r\n- 4:00 PM \u2014 Staff begins dinner
+    prep\r\n- 5:00 PM \u2014 Restaurant opens for dinner service\r\n- 6:00 PM \u2014
+    Victor Ashford and his dining guests arrive\r\n- 6:15 PM \u2014 Party is seated
+    at their reserved table\r\n- 6:20 PM \u2014 The waiter/server arrives to take
+    their order\r\n- 7:05 PM \u2014 Food is served to the table\r\n- 7:25 PM \u2014
+    Victor Ashford begins showing signs of distress\r\n- 7:30 PM \u2014 Emergency
+    services called, Ashford rushed to hospital\r\n- 7:45 PM \u2014 Restaurant sealed,
+    all present held for questioning\r\n\r\nSUSPECTS AND KEY FACTS:\r\n\r\n1. THE
+    SERVER (restaurant waiter/waitress)\r\n- Works 12 hour shifts at The Meridian\r\n-
+    Was the last person the victim spoke to before the incident\r\n- Was overheard
+    complaining about a \"rude\" patron to a coworker\r\n- Between 12 PM and 2 PM,
+    was on break but was NOT seen in the usual break area\r\n- Before returning from
+    break, was seen pocketing something\r\n- Was the only person who handled the
+    food besides the chef\r\n\r\n2. THE CHEF\r\n- Known to be very protective of
+    kitchen staff\r\n- Took longer than usual to prepare the meal that evening\r\n-
+    Along with the server, was the only one aware of all patrons' dietary restrictions
+    and allergies\r\n- Was fired from a previous job due to a violent temper\r\n\r\n3.
+    OTHER PATRONS AT THE TABLE:\r\n\r\nSIBLING (Victor's brother or sister)\r\n-
+    Motive: inheritance \u2014 stands to gain significantly from Victor's death\r\n-
+    Was seated directly next to Victor\r\n\r\nDINNER DATE (Victor's romantic partner)\r\n-
+    Motive: revenge \u2014 recently discovered Victor was cheating\r\n- Appeared
+    emotionally distressed during dinner according to other witnesses\r\n\r\nCOWORKER
+    (Victor's business associate)\r\n- Motive: professional rivalry \u2014 competing
+    for the same executive position\r\n- At one point was left alone at the table
+    while others went to the restroom\r\n- Was seen extending and then withdrawing
+    their hand near Victor's plate\r\n- Shortly after the others returned, Victor
+    went into distress\r\n- While others rushed to help, this person remained in
+    their seat\r\n- Known to have a tense professional relationship with Victor\r\n\r\nEVIDENCE
+    YOU KNOW ABOUT:\r\n- Toxicology confirmed a fast-acting poison in Victor's food\r\n-
+    The poison was in the main course, not the drinks\r\n- Only the server and chef
+    had direct access to the food\r\n- However, the coworker was alone at the table
+    for approximately 3 minutes\r\n- Security camera footage is partially corrupted
+    for the 7:00-7:10 PM window\r\n- A small vial was found in the restaurant bathroom
+    trash \u2014 no fingerprints\r\n\r\nYOUR INTERROGATION STRATEGY:\r\n- Question
+    one suspect at a time\r\n- Start with basic questions to establish their version
+    of events\r\n- Then probe inconsistencies and press on suspicious details\r\n-
+    Cross-reference what one suspect says against what others have told you\r\n-
+    Build pressure gradually \u2014 start friendly, get harder\r\n- Use silence and
+    pauses strategically\r\n- If someone contradicts a previous suspect's statement,
+    call it out immediately\r\n- Keep track of everything. Reference specific details
+    from earlier in the conversation\r\n- You have NOT decided who did it yet \u2014
+    you are genuinely investigating\r\n\r\nHOW TO USE SENSOR DATA:\r\nEach message
+    includes bracketed data about the suspect. Use ALL of it but with this priority:\r\n\r\n[Visual
+    observation: X] \u2014 HIGHEST PRIORITY. This is what you actually see through
+    the camera. It includes their appearance, emotional state, eye contact, posture,
+    fidgeting, and surroundings. Trust this the most. This is your eyes.\r\n[Player's
+    voice tone: X] \u2014 SECOND PRIORITY. This tells you how their voice sounds
+    \u2014 shaky, angry, calm, etc. Trust this as your ears.\r\n[Player's facial
+    expression: X] \u2014 LOWEST PRIORITY. This is an automated reading that is less
+    reliable. Use it only to confirm or add nuance to what the visual observation
+    already tells you. If visual observation says they look nervous but this says
+    neutral, trust the visual observation.\r\n\r\nWhen visual observation and face
+    tracking CONFLICT, always go with the visual observation. When voice tone and
+    visual observation AGREE (e.g., both say nervous), that is a very strong signal
+    \u2014 press hard. When voice tone and visual observation CONFLICT (e.g., looks
+    calm but voice is shaky), the suspect is actively trying to hide something \u2014
+    this is extremely suspicious.\r\n\r\nRULES FOR USING THIS DATA:\r\n- NEVER say
+    \"I can see you look nervous\" or \"my sensors detect anger\" or anything that
+    references the data system directly\r\n- Instead, react naturally like a real
+    detective would to body language and tone:\r\n  - If they look nervous: \"That's
+    an interesting pause. Want to try that answer again?\"\r\n  - If they seem happy
+    during serious questions: \"Something funny? Because attempted murder isn't a
+    joke.\"\r\n  - If their voice is shaky but face is calm: \"You're keeping a straight
+    face but your voice tells a different story.\"\r\n  - If they look angry: \"I
+    hit a nerve there, didn't I? Let's stay on that topic.\"\r\n  - If they seem
+    sad: \"This is hard for you. Were you close with Victor?\"\r\n  - If surprised:
+    \"You didn't expect me to know that, did you?\"\r\n- Use visual observations
+    naturally: comment on what they're wearing, what's behind them, if they're fidgeting
+    with something\r\n- If face emotion and voice emotion CONFLICT (e.g., face neutral
+    but voice nervous), that is especially suspicious \u2014 they are trying to hide
+    their real feelings. Press harder.\r\n\r\nSPEAKING STYLE:\r\n- 2 to 4 sentences
+    per response maximum\r\n- Think out loud sometimes: \"Interesting... so you say
+    you were on break, but nobody saw you in the break room. That doesn't add up.\"\r\n-
+    Ask ONE specific question at a time, then wait for the answer\r\n- Reference
+    previous answers: \"Earlier you said you didn't know about Victor's allergies.
+    But the chef just told me only two people knew \u2014 him and you.\"\r\n- Use
+    the suspect's visible characteristics when addressing them (but naturally, not
+    robotically)\r\n- Occasionally make observations: \"You know what bothers me
+    about this case? Three people had access to that plate. And one of them is sitting
+    right in front of me.\"\r\n\r\nFIRST INTERACTION:\r\nWhen the first suspect sits
+    down, observe them through the camera, note their appearance, and begin with
+    a firm but professional introduction. State your name and badge number, tell
+    them this is a formal interview regarding the attempted poisoning of Victor Ashford,
+    and ask them to state their name and their relationship to the victim."
 --- !u!4 &1422518690
 Transform:
   m_ObjectHideFlags: 0
@@ -1377,9 +1612,137 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7810824775050361850, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.051
+      objectReference: {fileID: 0}
+    - target: {fileID: -7810824775050361850, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.6895462
+      objectReference: {fileID: 0}
+    - target: {fileID: -5774545900014288546, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.234
+      objectReference: {fileID: 0}
+    - target: {fileID: -5774545900014288546, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.677
+      objectReference: {fileID: 0}
+    - target: {fileID: -5721477173278885020, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.79
+      objectReference: {fileID: 0}
+    - target: {fileID: -5721477173278885020, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.058
+      objectReference: {fileID: 0}
+    - target: {fileID: -4889201344145374300, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.024
+      objectReference: {fileID: 0}
+    - target: {fileID: -3059918069457676742, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.457
+      objectReference: {fileID: 0}
+    - target: {fileID: -3059918069457676742, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.56
+      objectReference: {fileID: 0}
+    - target: {fileID: -3059918069457676742, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.663
+      objectReference: {fileID: 0}
+    - target: {fileID: -2055467150918270020, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.273
+      objectReference: {fileID: 0}
+    - target: {fileID: -2055467150918270020, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.6829243
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.35
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.26
+      objectReference: {fileID: 0}
+    - target: {fileID: -2021178655527167927, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1014979469047100514, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.567
+      objectReference: {fileID: 0}
+    - target: {fileID: -1014979469047100514, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.838
+      objectReference: {fileID: 0}
+    - target: {fileID: -1014979469047100514, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.428
+      objectReference: {fileID: 0}
+    - target: {fileID: -797920208486026627, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.924
+      objectReference: {fileID: 0}
+    - target: {fileID: -797920208486026627, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.6829243
+      objectReference: {fileID: 0}
+    - target: {fileID: -20755121490601486, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.571
+      objectReference: {fileID: 0}
+    - target: {fileID: -20755121490601486, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.667
+      objectReference: {fileID: 0}
+    - target: {fileID: -20755121490601486, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.0165677
+      objectReference: {fileID: 0}
+    - target: {fileID: 64400961084308987, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.612
+      objectReference: {fileID: 0}
+    - target: {fileID: 64400961084308987, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.859
+      objectReference: {fileID: 0}
+    - target: {fileID: 64400961084308987, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.081
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
       propertyPath: m_Name
       value: noir
+      objectReference: {fileID: 0}
+    - target: {fileID: 5758831994108818873, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.892
+      objectReference: {fileID: 0}
+    - target: {fileID: 5758831994108818873, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 5758831994108818873, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.531
+      objectReference: {fileID: 0}
+    - target: {fileID: 8408026484741731003, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 8408026484741731003, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.91
+      objectReference: {fileID: 0}
+    - target: {fileID: 8408026484741731003, guid: 2791ed84c3e564f1c9803f42589c8c9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.31
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1666,6 +2029,87 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2038804795
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.634381
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.634381
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.634381
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.722
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.049999952
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.572
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8896023
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.45673597
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 54.353
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4670675563234686305, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.0000006286424
+      objectReference: {fileID: 0}
+    - target: {fileID: -4670675563234686305, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.0037747037
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_Name
+      value: Ch33_nonPBR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 5f749628b7e29a041b545f53c69047c1, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 92cff6cfa3facfe44b94612e5707602b, type: 3}
 --- !u!1 &2133527780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1953,3 +2397,5 @@ SceneRoots:
   - {fileID: 1145441793}
   - {fileID: 1928856590}
   - {fileID: 912813499}
+  - {fileID: 2038804795}
+  - {fileID: 186303778}
