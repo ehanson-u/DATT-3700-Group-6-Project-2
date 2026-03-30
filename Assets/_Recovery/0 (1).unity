@@ -954,7 +954,7 @@ MonoBehaviour:
   _emotionDetector: {fileID: 1064799471}
   _voiceAnalyzer: {fileID: 824755591}
   _visionAnalyzer: {fileID: 1145441792}
-  _introScreen: {fileID: 1064799475}
+  _introScreen: {fileID: 0}
   _detectiveAgentLocal: {fileID: 2133527781}
   _openRouterLLM: {fileID: 1422518689}
   _piperTTS: {fileID: 1278242821}

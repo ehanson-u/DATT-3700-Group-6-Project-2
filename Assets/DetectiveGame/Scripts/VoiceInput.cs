@@ -6,7 +6,7 @@ namespace DetectiveGame
     public class VoiceInput : MonoBehaviour
     {
         [SerializeField] private InterrogationManager _interrogationManager;
-        [SerializeField] private RecordAudio _recordAudio;
+        [SerializeField] private HumeVoiceAnalyzer _humeVoiceAnalyzer;
 
         [Header("Settings")]
         [SerializeField] private KeyCode pushToTalkKey = KeyCode.Space;
@@ -51,18 +51,17 @@ namespace DetectiveGame
             _currentTranscript = "";
             _isListening = true;
 
-            // Start speech-to-text
             if (_dictationRecognizer.Status == SpeechSystemStatus.Stopped)
             {
                 _dictationRecognizer.Start();
-                Debug.Log("[VoiceInput] Dictation started.");
             }
 
-            // Also start audio recording for voice emotion analysis
-            if (_recordAudio != null)
+            if (_humeVoiceAnalyzer != null)
             {
-                _recordAudio.StartRecording();
+                _humeVoiceAnalyzer.StartRecording();
             }
+
+            Debug.Log("[VoiceInput] Listening...");
         }
 
         private void StopListening()
@@ -73,19 +72,19 @@ namespace DetectiveGame
             if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
             {
                 _dictationRecognizer.Stop();
-                Debug.Log("[VoiceInput] Dictation stopped.");
             }
 
-            // Stop audio recording — this triggers upload to Python server
-            if (_recordAudio != null)
+            if (_humeVoiceAnalyzer != null)
             {
-                _recordAudio.StopRecording();
+                _humeVoiceAnalyzer.StopRecording();
             }
+
+            Debug.Log("[VoiceInput] Stopped.");
         }
 
         private void OnDictationResult(string text, ConfidenceLevel confidence)
         {
-            Debug.Log("[VoiceInput] Final result: " + text + " (confidence: " + confidence + ")");
+            Debug.Log("[VoiceInput] Result: " + text);
             _currentTranscript = text;
 
             if (_interrogationManager != null && !string.IsNullOrEmpty(text))
@@ -103,7 +102,6 @@ namespace DetectiveGame
 
         private void OnDictationComplete(DictationCompletionCause cause)
         {
-            Debug.Log("[VoiceInput] Dictation completed: " + cause);
             _isListening = false;
         }
 
@@ -118,9 +116,7 @@ namespace DetectiveGame
             if (_dictationRecognizer != null)
             {
                 if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
-                {
                     _dictationRecognizer.Stop();
-                }
                 _dictationRecognizer.DictationResult -= OnDictationResult;
                 _dictationRecognizer.DictationHypothesis -= OnDictationHypothesis;
                 _dictationRecognizer.DictationComplete -= OnDictationComplete;

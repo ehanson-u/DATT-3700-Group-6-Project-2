@@ -9,7 +9,8 @@ namespace DetectiveGame
         [SerializeField] private InterrogationManager _interrogationManager;
         [SerializeField] private EmotionDetector _emotionDetector;
         [SerializeField] private VoiceInput _voiceInput;
-        [SerializeField] private RecordAudio _voiceAnalyzer;
+        [SerializeField] private HumeVoiceAnalyzer _voiceAnalyzer;
+        [SerializeField] private IntroScreen _introScreen;
 
         private string _playerInput = "";
         private Vector2 _scrollPosition;
@@ -81,6 +82,7 @@ namespace DetectiveGame
 
         private void OnGUI()
         {
+            if (_introScreen != null && _introScreen.IsShowingIntro()) return;
             if (_interrogationManager == null) return;
 
             InitStyles();

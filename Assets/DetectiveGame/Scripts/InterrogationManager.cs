@@ -18,8 +18,9 @@ namespace DetectiveGame
 
         [Header("References")]
         [SerializeField] private EmotionDetector _emotionDetector;
-        [SerializeField] private RecordAudio _voiceAnalyzer;
+        [SerializeField] private HumeVoiceAnalyzer _voiceAnalyzer;
         [SerializeField] private VisionAnalyzer _visionAnalyzer;
+        [SerializeField] private IntroScreen _introScreen;
 
         [Tooltip("For Local mode: drag the LLM Detective GameObject here")]
         [SerializeField] private MonoBehaviour _detectiveAgentLocal;
@@ -42,7 +43,7 @@ namespace DetectiveGame
         [SerializeField] private int _visionAnalysisFrequency = 1;
 
         [Tooltip("Max seconds to wait for voice/vision analysis before sending anyway")]
-        [SerializeField] private float _analysisTimeout = 8f;
+        [SerializeField] private float _analysisTimeout = 10f;
 
         [TextArea(3, 6)]
         [SerializeField]
@@ -69,6 +70,19 @@ namespace DetectiveGame
 
         private async void Start()
         {
+            // Wait for intro screen to close
+            // Wait for intro screen to close
+            if (_introScreen != null)
+            {
+                while (_introScreen.IsShowingIntro())
+                {
+                    await System.Threading.Tasks.Task.Yield();
+                    await System.Threading.Tasks.Task.Delay(200);
+                }
+                // Extra delay to let UI settle
+                await System.Threading.Tasks.Task.Delay(500);
+            }
+
             if (_llmMode == LLMMode.Local)
             {
 #if UNITY_EDITOR || UNITY_STANDALONE
