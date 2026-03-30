@@ -1319,7 +1319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DetectiveGame.OpenRouterLLM
   _apiKey: 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
-  _model: google/gemini-3-flash-preview
+  _model: google/gemini-2.5-flash-lite
   _apiUrl: https://openrouter.ai/api/v1/chat/completions
   _maxTokens: 50000
   _temperature: 0.8
