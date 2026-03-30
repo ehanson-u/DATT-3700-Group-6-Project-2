@@ -27,15 +27,19 @@ namespace DetectiveGame
         [Tooltip("For OpenRouter mode: drag the OpenRouterLLM GameObject here")]
         [SerializeField] private OpenRouterLLM _openRouterLLM;
 
-        [Tooltip("Drag the PiperManager GameObject here")]
+        [Header("TTS — assign ONE of these")]
+        [Tooltip("Drag PiperManager here for local TTS")]
         [SerializeField] private PiperManager _piperTTS;
+
+        [Tooltip("Drag ElevenLabsTTS here for cloud TTS (takes priority over Piper)")]
+        [SerializeField] private ElevenLabsTTS _elevenLabsTTS;
 
         [Header("Settings")]
         [SerializeField] private bool _injectEmotionIntoPrompt = true;
         [SerializeField] private bool _useVisionAnalysis = true;
 
-        [Tooltip("Analyze vision every N messages (1 = every message, 3 = every 3rd)")]
-        [SerializeField] private int _visionAnalysisFrequency = 2;
+        [Tooltip("Analyze vision every N messages (1 = every message)")]
+        [SerializeField] private int _visionAnalysisFrequency = 1;
 
         [Tooltip("Max seconds to wait for voice/vision analysis before sending anyway")]
         [SerializeField] private float _analysisTimeout = 8f;
@@ -43,11 +47,7 @@ namespace DetectiveGame
         [TextArea(3, 6)]
         [SerializeField]
         private string _emotionSystemSuffix =
-            "\n\nIMPORTANT: Each message from the player includes notes about their current facial expression, voice emotion, and sometimes a visual description of their appearance and surroundings. " +
-            "Use ALL of this to inform your questioning. If their face looks calm but their voice is nervous, they are trying to hide something. " +
-            "If you see something interesting in their appearance or surroundings, you can reference it naturally. " +
-            "React naturally as a detective reading body language, tone, and visual cues. " +
-            "Do NOT explicitly say 'I can see you look nervous' or reference the emotion data directly - react naturally like a real detective.";
+            "\n\nRemember: Use ALL bracketed data in every response. Face emotion, voice emotion, and visual observations are your tools. Never reference them directly — react to them naturally as a detective would.";
 
         private List<string> _conversationLog = new List<string>();
         private string _currentDetectiveText = "";
@@ -86,6 +86,11 @@ namespace DetectiveGame
 
                 await agent.Warmup();
                 _isReady = true;
+
+                if (_useVisionAnalysis && _visionAnalyzer != null)
+                {
+                    _visionAnalyzer.AnalyzeCurrentFrame(desc => _lastVisionDescription = desc);
+                }
 
                 string response = await agent.Chat(
                     "[The suspect has just sat down in the interrogation room. Begin your questioning.]",
@@ -141,7 +146,6 @@ namespace DetectiveGame
             _isWaitingForResponse = true;
             _messageCount++;
 
-            // Start the coroutine that waits for all analysis to finish
             StartCoroutine(GatherAnalysisAndSend(playerMessage));
         }
 
@@ -153,10 +157,8 @@ namespace DetectiveGame
                            (_messageCount % _visionAnalysisFrequency == 0);
 
             bool visionDone = !doVision;
-            bool voiceDone = (_voiceAnalyzer == null);
             string visionResult = _lastVisionDescription;
 
-            // Kick off vision analysis if needed
             if (doVision)
             {
                 _statusText = "Analyzing appearance...";
@@ -168,19 +170,12 @@ namespace DetectiveGame
                 });
             }
 
-            // Wait for voice analyzer if it's currently processing
-            if (_voiceAnalyzer != null && _voiceAnalyzer.IsAnalyzing)
-            {
-                _statusText = "Analyzing voice...";
-            }
-
-            // Wait for everything with a timeout
             float timer = 0f;
             while ((!visionDone || (_voiceAnalyzer != null && _voiceAnalyzer.IsAnalyzing)) && timer < _analysisTimeout)
             {
                 timer += Time.deltaTime;
 
-                if (!visionDone && !voiceDone)
+                if (!visionDone && _voiceAnalyzer != null && _voiceAnalyzer.IsAnalyzing)
                     _statusText = "Analyzing voice & appearance...";
                 else if (!visionDone)
                     _statusText = "Analyzing appearance...";
@@ -197,7 +192,6 @@ namespace DetectiveGame
 
             _statusText = "Detective is thinking...";
 
-            // Now build the full message with all context
             string faceEmotion = GetFaceEmotionContext();
             string voiceEmotion = GetVoiceEmotionContext();
 
@@ -223,7 +217,6 @@ namespace DetectiveGame
                 _conversationLog.Add("[Vision: " + _lastVisionDescription + "]");
             }
 
-            // Send to LLM
             if (_llmMode == LLMMode.Local)
             {
                 SendToLocalLLM(messageWithContext);
@@ -265,24 +258,35 @@ namespace DetectiveGame
 
         private void SpeakText(string text)
         {
-            if (_piperTTS == null)
+            if (_elevenLabsTTS != null)
             {
-                Debug.LogWarning("No PiperManager assigned, skipping TTS");
+                _isSpeaking = true;
+                _elevenLabsTTS.Speak(text);
                 return;
             }
 
-            _isSpeaking = true;
-            _piperTTS.SynthesizeAndPlay(text);
+            if (_piperTTS != null)
+            {
+                _isSpeaking = true;
+                _piperTTS.SynthesizeAndPlay(text);
+                return;
+            }
+
+            Debug.LogWarning("No TTS assigned, skipping speech");
         }
 
         private void Update()
         {
-            if (_isSpeaking && _piperTTS != null)
+            if (_isSpeaking)
             {
-                AudioSource audioSource = _piperTTS.GetComponent<AudioSource>();
-                if (audioSource != null && !audioSource.isPlaying)
+                if (_elevenLabsTTS != null)
                 {
-                    _isSpeaking = false;
+                    if (!_elevenLabsTTS.IsSpeaking) _isSpeaking = false;
+                }
+                else if (_piperTTS != null)
+                {
+                    AudioSource audioSource = _piperTTS.GetComponent<AudioSource>();
+                    if (audioSource != null && !audioSource.isPlaying) _isSpeaking = false;
                 }
             }
         }
